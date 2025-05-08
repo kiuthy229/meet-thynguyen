@@ -1,27 +1,22 @@
-export const faqs = [
+export interface Faq {
+  question: string;
+  content: string;
+}
+
+export const faqs: Faq[] = [
   {
-    question: "What is your medical care?",
+    question: 'What is Small Talk?',
     content:
-      "One Medical was founded on a better model of care one designed around patients needs that provides a higher level of quality and service affordably. We do this through innovative design, excellent customer service, and the efficient use of technology.",
+      'Small Talk is a service where you can engage in meaningful conversations and share your thoughts in a relaxed and friendly environment.',
   },
   {
-    question: "What happens if I need to go a hospital?",
+    question: 'What kind of Tech Support do you provide?',
     content:
-      "One Medical was founded on a better model of care one designed around patients needs that provides a higher level of quality and service affordably. We do this through innovative design, excellent customer service, and the efficient use of technology.",
+      'Our Tech Support service helps you troubleshoot technical issues, set up devices, and provide guidance on technology-related problems.',
   },
   {
-    question: "What happens if I need to go a hospital?",
+    question: 'What activities are included in Entertainment?',
     content:
-      "One Medical was founded on a better model of care one designed around patients needs that provides a higher level of quality and service affordably. We do this through innovative design, excellent customer service, and the efficient use of technology.",
-  },
-  {
-    question: "Can I visit your medical office?",
-    content:
-      "One Medical was founded on a better model of care one designed around patients needs that provides a higher level of quality and service affordably. We do this through innovative design, excellent customer service, and the efficient use of technology.",
-  },
-  {
-    question: "Does you provide urgent care?",
-    content:
-      "One Medical was founded on a better model of care one designed around patients needs that provides a higher level of quality and service affordably. We do this through innovative design, excellent customer service, and the efficient use of technology.",
+      'Entertainment includes fun and engaging activities such as playing games, watching movies, or participating in other recreational events to help you unwind.',
   },
 ];

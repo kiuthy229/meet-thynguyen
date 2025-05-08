@@ -1,12 +1,9 @@
 import React from 'react';
-import './App.css';
+import './app.css';
+import Layout from './layout/Layout';
 
 function App(): JSX.Element {
-  return (
-    <>
-      <div>Start app</div>
-    </>
-  );
+  return <Layout />;
 }
 
 export default App;
