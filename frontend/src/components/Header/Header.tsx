@@ -5,9 +5,9 @@ import { NavLink, Link } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
 
 const navLinks = [
-  { path: '/home', display: 'Home' },
+  { path: '/', display: 'Home' },
   { path: '/members', display: 'Members' },
-  { path: '/requests', display: 'Request' },
+  { path: '/request', display: 'Request' },
   { path: '/contact', display: 'Contact Me' },
 ];
 
@@ -50,7 +50,7 @@ const Header = () => {
         <div className='flex items-center justify-between'>
           {/* =================logo================= */}
           <div>
-            <img src={logo} alt='logo' />
+            <img src={logo} className='w-[100px]' alt='logo' />
           </div>
 
           {/* ====================menu================= */}

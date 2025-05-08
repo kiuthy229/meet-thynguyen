@@ -1,6 +1,6 @@
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
-import React from 'react';
 import About from '../pages/About';
 import Contact from '../pages/Contact';
 import Login from '../pages/Login';
@@ -8,7 +8,7 @@ import Register from '../pages/Register';
 import NotFound from '../pages/NotFound';
 import Members from '../pages/Members/Members';
 import MemberDetails from '../pages/Members/MemberDetails';
-import Requests from '../pages/Requests';
+import RequestMeeting from '../pages/RequestMeeting';
 
 const Routers = () => {
   return (
@@ -20,7 +20,7 @@ const Routers = () => {
       <Route path='/register' element={<Register />} />
       <Route path='/members' element={<Members />} />
       <Route path='/members/:id' element={<MemberDetails />} />
-      <Route path='/requests' element={<Requests />} />
+      <Route path='/request' element={<RequestMeeting />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   );

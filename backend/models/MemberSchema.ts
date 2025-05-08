@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-interface IDoctor extends Document {
+interface IMember extends Document {
   email: string;
   password: string;
   name: string;
@@ -21,9 +21,9 @@ interface IDoctor extends Document {
   appointments: mongoose.Types.ObjectId[];
 }
 
-const DoctorSchema: Schema<IDoctor> = new mongoose.Schema({
+const MemberSchema: Schema<IMember> = new mongoose.Schema({
   // ...existing code...
 });
 
-const Doctor: Model<IDoctor> = mongoose.model<IDoctor>("Doctor", DoctorSchema);
-export default Doctor;
+const Member: Model<IMember> = mongoose.model<IMember>("Member", MemberSchema);
+export default Member;

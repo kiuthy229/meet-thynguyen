@@ -1,43 +1,43 @@
 import React, { useState } from 'react';
 
-const Register = () => {
+const RequestMeeting = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    doctor: '',
+    date: '',
+    time: '',
+    reason: '',
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register Form Submitted:', formData);
+    console.log('Meeting Request Submitted:', formData);
     // Add API call logic here
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
+    <div className="max-w-lg mx-auto p-6">
       <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Register
+        Request a Meeting
       </h1>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
           <label
-            htmlFor="name"
+            htmlFor="doctor"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Name
+            Member
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="doctor"
+            name="doctor"
+            value={formData.doctor}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -45,16 +45,16 @@ const Register = () => {
         </div>
         <div>
           <label
-            htmlFor="email"
+            htmlFor="date"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Email
+            Date
           </label>
           <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
+            type="date"
+            id="date"
+            name="date"
+            value={formData.date}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -62,16 +62,16 @@ const Register = () => {
         </div>
         <div>
           <label
-            htmlFor="password"
+            htmlFor="time"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Password
+            Time
           </label>
           <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
+            type="time"
+            id="time"
+            name="time"
+            value={formData.time}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -79,16 +79,15 @@ const Register = () => {
         </div>
         <div>
           <label
-            htmlFor="confirmPassword"
+            htmlFor="reason"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Confirm Password
+            Reason
           </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
+          <textarea
+            id="reason"
+            name="reason"
+            value={formData.reason}
             onChange={handleChange}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -98,11 +97,11 @@ const Register = () => {
           type="submit"
           className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          Register
+          Submit Request
         </button>
       </form>
     </div>
   );
 };
 
-export default Register;
+export default RequestMeeting;
