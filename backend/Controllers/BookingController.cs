@@ -21,20 +21,20 @@ public class BookingController : Controller
     {
         booking.CreatedAt = DateTime.UtcNow;
         booking.UpdatedAt = DateTime.UtcNow;
-        await _mongoDbService.CreateAsync(booking);
+        await _mongoDbService.CreateAsync("bookings", booking);
         return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking);
     }
 
     [HttpGet]
     public async Task<List<Booking>> GetBookings()
     {
-        return await _mongoDbService.GetAllAsync();
+        return await _mongoDbService.GetAllAsync<Booking>("bookings");
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBooking(string id)
     {
-        var booking = await _mongoDbService.GetByIdAsync(id);
+        var booking = await _mongoDbService.GetByIdAsync<Booking>("bookings", id);
         if (booking == null)
         {
             return NotFound();
@@ -45,7 +45,7 @@ public class BookingController : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateBooking(string id, [FromBody] Booking updatedBooking)
     {
-        var existingBooking = await _mongoDbService.GetByIdAsync(id);
+        var existingBooking = await _mongoDbService.GetByIdAsync<Booking>("bookings", id);
         if (existingBooking == null)
         {
             return NotFound();
@@ -53,19 +53,19 @@ public class BookingController : Controller
 
         updatedBooking.Id = id;
         updatedBooking.UpdatedAt = DateTime.UtcNow;
-        await _mongoDbService.UpdateAsync(id, updatedBooking);
+        await _mongoDbService.UpdateAsync("bookings", id, updatedBooking);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBooking(string id)
     {
-        var booking = await _mongoDbService.GetByIdAsync(id);
+        var booking = await _mongoDbService.GetByIdAsync<Booking>("bookings", id);
         if (booking == null)
         {
             return NotFound();
         }
-        await _mongoDbService.DeleteAsync(id);
+        await _mongoDbService.DeleteAsync<Booking>("bookings", id);
         return NoContent();
     }
 }

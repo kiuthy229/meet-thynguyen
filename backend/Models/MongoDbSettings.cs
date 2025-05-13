@@ -7,5 +7,6 @@ namespace MeetThyNguyen.Models
     public string BookingsCollectionName { get; set; }
     public string UsersCollectionName { get; set; }
     public string ReviewsCollectionName { get; set; }
+    public string MembersCollectionName { get; set; }
   }
 }

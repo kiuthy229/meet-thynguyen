@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MeetThyNguyen.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MeetThyNguyen.Services;
+using System.Threading.Tasks;
 
 namespace MeetThyNguyen.Controllers
 {
@@ -10,18 +9,24 @@ namespace MeetThyNguyen.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        private static List<Member> members = new List<Member>();
+        private readonly MongoDbService _mongoDbService;
+
+        public MemberController(MongoDbService mongoDbService)
+        {
+            _mongoDbService = mongoDbService;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Member>> GetAllMembers()
+        public async Task<IActionResult> GetAllMembers()
         {
+            var members = await _mongoDbService.GetAllAsync<Member>("members");
             return Ok(members);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Member> GetMember(Guid id)
+        public async Task<IActionResult> GetMember(string id)
         {
-            var member = members.FirstOrDefault(m => m.Id == id);
+            var member = await _mongoDbService.GetByIdAsync<Member>("members", id);
             if (member == null)
             {
                 return NotFound();
@@ -30,54 +35,35 @@ namespace MeetThyNguyen.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Member> CreateMember([FromBody] Member member)
+        public async Task<IActionResult> CreateMember([FromBody] Member member)
         {
-            member.Id = Guid.NewGuid();
-            members.Add(member);
+            await _mongoDbService.CreateAsync("members", member);
             return CreatedAtAction(nameof(GetMember), new { id = member.Id }, member);
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateMember(Guid id, [FromBody] Member updatedMember)
+        public async Task<IActionResult> UpdateMember(string id, [FromBody] Member updatedMember)
         {
-            var member = members.FirstOrDefault(m => m.Id == id);
-            if (member == null)
+            var existingMember = await _mongoDbService.GetByIdAsync<Member>("members", id);
+            if (existingMember == null)
             {
                 return NotFound();
             }
 
-            // Update member properties
-            member.Email = updatedMember.Email;
-            member.Password = updatedMember.Password;
-            member.Name = updatedMember.Name;
-            member.Phone = updatedMember.Phone;
-            member.Photo = updatedMember.Photo;
-            member.TicketPrice = updatedMember.TicketPrice;
-            member.Role = updatedMember.Role;
-            member.Specialization = updatedMember.Specialization;
-            member.Qualifications = updatedMember.Qualifications;
-            member.Experiences = updatedMember.Experiences;
-            member.Bio = updatedMember.Bio;
-            member.About = updatedMember.About;
-            member.TimeSlots = updatedMember.TimeSlots;
-            member.Reviews = updatedMember.Reviews;
-            member.AverageRating = updatedMember.AverageRating;
-            member.TotalRating = updatedMember.TotalRating;
-            member.IsApproved = updatedMember.IsApproved;
-            member.Appointments = updatedMember.Appointments;
-
+            updatedMember.Id = id;
+            await _mongoDbService.UpdateAsync("members", id, updatedMember);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteMember(Guid id)
+        public async Task<IActionResult> DeleteMember(string id)
         {
-            var member = members.FirstOrDefault(m => m.Id == id);
+            var member = await _mongoDbService.GetByIdAsync<Member>("members", id);
             if (member == null)
             {
                 return NotFound();
             }
-            members.Remove(member);
+            await _mongoDbService.DeleteAsync<Member>("members", id);
             return NoContent();
         }
     }

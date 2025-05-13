@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MeetThyNguyen.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MeetThyNguyen.Services;
+using System.Threading.Tasks;
 
 namespace MeetThyNguyen.Controllers
 {
@@ -10,18 +9,24 @@ namespace MeetThyNguyen.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private static List<User> users = new List<User>();
+        private readonly MongoDbService _mongoDbService;
+
+        public UserController(MongoDbService mongoDbService)
+        {
+            _mongoDbService = mongoDbService;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
+            var users = await _mongoDbService.GetAllAsync<User>("users");
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetUser(Guid id)
+        public async Task<IActionResult> GetUser(string id)
         {
-            var user = users.FirstOrDefault(u => u.Id == id);
+            var user = await _mongoDbService.GetByIdAsync<User>("users", id);
             if (user == null)
             {
                 return NotFound();
@@ -30,45 +35,35 @@ namespace MeetThyNguyen.Controllers
         }
 
         [HttpPost]
-        public ActionResult<User> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] User user)
         {
-            user.Id = Guid.NewGuid();
-            users.Add(user);
+            await _mongoDbService.CreateAsync("users", user);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateUser(Guid id, [FromBody] User updatedUser)
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] User updatedUser)
         {
-            var user = users.FirstOrDefault(u => u.Id == id);
-            if (user == null)
+            var existingUser = await _mongoDbService.GetByIdAsync<User>("users", id);
+            if (existingUser == null)
             {
                 return NotFound();
             }
 
-            // Update user properties
-            user.Email = updatedUser.Email;
-            user.Password = updatedUser.Password;
-            user.Name = updatedUser.Name;
-            user.Phone = updatedUser.Phone;
-            user.Photo = updatedUser.Photo;
-            user.Role = updatedUser.Role;
-            user.Gender = updatedUser.Gender;
-            user.BloodType = updatedUser.BloodType;
-            user.Appointments = updatedUser.Appointments;
-
+            updatedUser.Id = id;
+            await _mongoDbService.UpdateAsync("users", id, updatedUser);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(Guid id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = users.FirstOrDefault(u => u.Id == id);
+            var user = await _mongoDbService.GetByIdAsync<User>("users", id);
             if (user == null)
             {
                 return NotFound();
             }
-            users.Remove(user);
+            await _mongoDbService.DeleteAsync<User>("users", id);
             return NoContent();
         }
     }
