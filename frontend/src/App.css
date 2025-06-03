@@ -53,3 +53,8 @@ body {
     line-height: 30px;
   }
 }
+
+.text__para {
+  font-size: 1.2rem;
+  color: #333;
+}

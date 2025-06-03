@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { members } from '../../assets/data/members';
+import starIcon from '../../assets/images/star.png';
+import MemberAbout from './MemberAbout';
+import MemberFeedback from './MemberFeedback';
+import SidePanel from './SidePanel';
 
 const MemberDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,68 +16,72 @@ const MemberDetails = () => {
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>{member.name}</h1>
-      <img
-        src={member.photo}
-        alt={`${member.name}'s profile`}
-        className='w-[150px] rounded-md'
-      />
-      <div style={{ marginTop: '1rem' }}>
-        <button
-          onClick={() => setActiveTab('about')}
-          style={{
-            marginRight: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: activeTab === 'about' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'about' ? '#fff' : '#000',
-            border: '1px solid #ccc',
-            cursor: 'pointer',
-          }}
-        >
-          About
-        </button>
-        <button
-          onClick={() => setActiveTab('feedback')}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: activeTab === 'feedback' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'feedback' ? '#fff' : '#000',
-            border: '1px solid #ccc',
-            cursor: 'pointer',
-          }}
-        >
-          Feedback
-        </button>
-      </div>
-      <div style={{ marginTop: '2rem' }}>
-        {activeTab === 'about' && (
-          <div>
-            <p>
-              <strong>Specialty:</strong> {member.specialty}
-            </p>
-            <p>
-              <strong>Average Rating:</strong> {member.avgRating}
-            </p>
-            <p>
-              <strong>Total Ratings:</strong> {member.totalRating}
-            </p>
-            <p>
-              <strong>Total Appointments:</strong> {member.totalAppointments}
-            </p>
-            <p>
-              <strong>Company:</strong> {member.company}
-            </p>
+    <section>
+      <div className='max-w-[1170px] px-5 mx-auto'>
+        <div className='grid md:grid-cols-3 gap-[50px]'>
+          <div className='md:col-span-2'>
+            <div className='flex items-center gap-5'>
+              <figure className='max-w-[200px] mx-h-[200px]'>
+                <img src={member.photo} alt='' className='w-full rounded-md' />
+              </figure>
+
+              <div>
+                <span className='bg-[#CCF0F3] text-irisBlueColor py-1 px-6 lg:py-2 lg:px-6 text-[12px] leading-4 lg:text-[16px] lg:leading-7 font-semibold rounded'>
+                  {member.specialty}
+                </span>
+                <h3 className='text-headingColor text-[22px] leading-9 mt-3 font-bold'>
+                  {member.name}
+                </h3>
+                <div className='flex items-center gap-[6px]'>
+                  <span className='flex items-center gap-[6px] text-[14px] leading-5 lg:text-[16px] lg:leading-7 font-semibold text-headingColor'>
+                    <img src={starIcon} alt='' /> {member.avgRating}
+                  </span>
+                  <span className='text-[14px] leading-5 lg:text-[16px] lg:leading-7 font-[400] text-textColor'>
+                    ({member.totalRating} reviews)
+                  </span>
+                </div>
+
+                <p className='text__para text-[14px] leading-5 md:text-[15px] lg:max-w-[390px]'>
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Culpa eveniet quasi optio modi sequi, voluptates eos facere,
+                </p>
+              </div>
+            </div>
+
+            <div className='mt-[50px] border-b border-solid border-[#0066ff34]'>
+              <button
+                onClick={() => setActiveTab('about')}
+                className={`${
+                  activeTab === 'about' &&
+                  'border-b border-solid border-primaryColor'
+                } py-2 px-5 mr-5 text-[16px] leading-7 text-headingColor font-semibold`}
+              >
+                About
+              </button>
+
+              <button
+                onClick={() => setActiveTab('feedback')}
+                className={`${
+                  activeTab === 'feedback' &&
+                  'border-b border-solid border-primaryColor'
+                } py-2 px-5 mr-5 text-[16px] leading-7 text-headingColor font-semibold`}
+              >
+                Feedback
+              </button>
+            </div>
+            
+            <div className='mt-[50px]'>
+              {activeTab === 'about' && <MemberAbout member={member} />}
+              {activeTab === 'feedback' && <MemberFeedback member={member} />}
+            </div>
           </div>
-        )}
-        {activeTab === 'feedback' && (
+
           <div>
-            <h2>Feedback</h2>
-            <p>No feedback available yet.</p>
+            <SidePanel />
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

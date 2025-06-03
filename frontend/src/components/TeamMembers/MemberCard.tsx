@@ -1,7 +1,7 @@
 import React from 'react';
 import { MeetingType } from '../../assets/data/meetingTypes';
 import { MemberType } from '../../assets/data/members';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BsArrowRight } from 'react-icons/bs';
 import starIcon from '../../assets/images/star.png';
 
@@ -11,6 +11,7 @@ interface MemberCardProps {
 }
 
 const MemberCard: React.FC<MemberCardProps> = ({ item, index }) => {
+  const navigate = useNavigate();
   const {
     name,
     specialty,
@@ -20,8 +21,15 @@ const MemberCard: React.FC<MemberCardProps> = ({ item, index }) => {
     totalAppointments,
     company,
   } = item;
+
+  const handleMemberClick = (id: string) => {
+    navigate(`/members/${id}`);
+  };
   return (
-    <div className='py-[30px] px-3 lg:px-5 flex flex-col justify-center items-start'>
+    <div
+      onClick={() => handleMemberClick(item.id)}
+      className='py-[30px] px-3 lg:px-5 flex flex-col justify-center items-start'
+    >
       <img
         src={photo}
         alt={name}
