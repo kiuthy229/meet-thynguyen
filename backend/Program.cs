@@ -46,15 +46,4 @@ app.UseAuthorization();
 
 app.MapControllers(); // Ensure controllers are mapped
 
-app.MapGet("/metadata", () =>
-{
-    var metadata = new
-    {
-        ApplicationName = "Meet Thy Nguyen",
-        Version = "1.0.0",
-        Author = "Thy Nguyen"
-    };
-    return Results.Ok(metadata);
-});
-
 app.Run();

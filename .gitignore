@@ -25,5 +25,24 @@ out/
 
 # Dependency directories
 .DS_Store
-```
-````
+
+# .NET specific
+bin/
+obj/
+*.pdb
+*.exe
+*.dll
+*.cache
+*.db
+
+# Visual Studio specific
+*.user
+*.suo
+*.userosscache
+*.vspscc
+.vscode/
+
+# macOS specific
+._*
+.Spotlight-V100
+.Trashes

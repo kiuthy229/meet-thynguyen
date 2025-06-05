@@ -15,9 +15,8 @@ namespace MeetThyNguyen.Models
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Photo { get; set; }
-        public string Role { get; set; } // "patient" or "admin"
-        public string Gender { get; set; } // "male", "female", or "other"
-        public string BloodType { get; set; }
+        public string Role { get; set; } 
+        public string Gender { get; set; } 
         public List<string> Appointments { get; set; } // Change type to List<string> for ObjectId compatibility
     }
 }
