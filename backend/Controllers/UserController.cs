@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MeetThyNguyen.Models;
 using MeetThyNguyen.Services;
+using MongoDB.Bson;
 using System.Threading.Tasks;
 
 namespace MeetThyNguyen.Controllers
@@ -26,11 +27,20 @@ namespace MeetThyNguyen.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(string id)
         {
-            var user = await _mongoDbService.GetByIdAsync<User>("users", id);
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+
+            Console.WriteLine($"Fetching user with ID: {objectId}");
+            var user = await _mongoDbService.GetByIdAsync<User>("users", objectId.ToString());
             if (user == null)
             {
+                Console.WriteLine("User not found.");
                 return NotFound();
             }
+
+            Console.WriteLine($"User fetched: {user}");
             return Ok(user);
         }
 
@@ -44,26 +54,36 @@ namespace MeetThyNguyen.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] User updatedUser)
         {
-            var existingUser = await _mongoDbService.GetByIdAsync<User>("users", id);
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+
+            var existingUser = await _mongoDbService.GetByIdAsync<User>("users", objectId.ToString());
             if (existingUser == null)
             {
                 return NotFound();
             }
 
-            updatedUser.Id = id;
-            await _mongoDbService.UpdateAsync("users", id, updatedUser);
+            updatedUser.Id = objectId.ToString();
+            await _mongoDbService.UpdateAsync("users", objectId.ToString(), updatedUser);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _mongoDbService.GetByIdAsync<User>("users", id);
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+
+            var user = await _mongoDbService.GetByIdAsync<User>("users", objectId.ToString());
             if (user == null)
             {
                 return NotFound();
             }
-            await _mongoDbService.DeleteAsync<User>("users", id);
+            await _mongoDbService.DeleteAsync<User>("users", objectId.ToString());
             return NoContent();
         }
     }

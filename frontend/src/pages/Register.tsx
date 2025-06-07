@@ -2,12 +2,17 @@ import React, { useState } from 'react';
 import signupImg from '../assets/images/signup.gif';
 import avatar from '../assets/images/avatar.png';
 import { Link } from 'react-router-dom';
+import uploadImageToCloudinary from '../utils/uploadCloudinary.js';
+import { BASE_URL } from '../config.js';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Register = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewURL, setPreviewURL] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [previewURL, setPreviewURL] = useState<string>('');
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -15,32 +20,58 @@ const Register = () => {
     gender: '',
     role: 'client',
   });
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-      setFormData({ ...formData, photo: e.target.files[0].name });
+    if (file) {
+      const data = await uploadImageToCloudinary(file);
+      setPreviewURL(data.url);
+      setSelectedFile(data.url);
+      setFormData({
+        ...formData,
+        photo: data.url,
+      });
     }
   };
-  const handleFileUpload = () => {
-    if (selectedFile) {
-      const formDataToUpload = new FormData();
-      formDataToUpload.append('photo', selectedFile);
-      // Add API call logic here to upload the file
-      console.log('File ready for upload:', formDataToUpload);
-    }
-  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register Form Submitted:', formData);
-    // Add API call logic here
+    setLoading(true);
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${BASE_URL}/Auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        throw new Error('Registration failed');
+      }
+      const { message } = await res.json();
+      toast.success(message);
+      setLoading(false);
+
+      navigate('/login');
+    } catch (error: any) {
+      toast.error(error?.message || 'Registration failed');
+      setLoading(false);
+      return;
+    }
   };
 
   return (
@@ -62,8 +93,8 @@ const Register = () => {
                 <input
                   type='text'
                   placeholder='Full Name'
-                  name='fullName'
-                  value={formData.fullName}
+                  name='name'
+                  value={formData.name}
                   onChange={handleChange}
                   className='w-full py-3 border-b border-solid border-[#0066ff61] outline-primaryColor focus:outline-none focus:border-b-primaryColor text-[22px] text-headingColor placeholder:text-textColor leading-7 cursor-pointer'
                 />
@@ -94,8 +125,8 @@ const Register = () => {
               <div className='mb-5'>
                 <input
                   type='password'
-                  placeholder='Enter Your Password'
-                  name='password'
+                  placeholder='Confirm Your Password'
+                  name='confirmPassword'
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   className='w-full py-3 border-b border-solid border-[#0066ff61] outline-primaryColor focus:outline-none focus:border-b-primaryColor text-[22px] text-headingColor placeholder:text-textColor leading-7 cursor-pointer'
@@ -107,25 +138,10 @@ const Register = () => {
                   htmlFor=''
                   className='text-headingColor font-bold text-[16px] leading-7'
                 >
-                  Are you a:{' '}
-                  <select
-                    value={formData.role}
-                    onChange={handleChange}
-                    name='role'
-                    className='text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none'
-                  >
-                    <option value='member'>Member</option>
-                    <option value='client'>Client</option>
-                  </select>
-                </label>
-
-                <label
-                  htmlFor=''
-                  className='text-headingColor font-bold text-[16px] leading-7'
-                >
                   Gender:{' '}
                   <select
                     value={formData.gender}
+                    onChange={handleChange}
                     name='gender'
                     className='text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none'
                   >
@@ -138,9 +154,9 @@ const Register = () => {
               </div>
 
               <div className='mb-5 flex items-center gap-3'>
-                <figure className='w-[60px] h-[60px] rounded-full border-2 border-solid border-primaryColor flex items-center'>
-                  <img src={avatar} alt='' className='w-full rounded-full' />
-                </figure>
+                {selectedFile && <figure className='w-[60px] h-[60px] rounded-full border-2 border-solid border-primaryColor flex items-center'>
+                  <img src={previewURL} alt='' className='w-full rounded-full' />
+                </figure>}
 
                 <div className='relative w-[160px] h-[50px]'>
                   <input
@@ -150,8 +166,6 @@ const Register = () => {
                     accept='.jpg, .png'
                     className='absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer'
                     onChange={handleFileChange}
-                   
-
                   />
                   <label
                     htmlFor='customFile'
@@ -165,9 +179,10 @@ const Register = () => {
               <div className='mt-7'>
                 <button
                   type='submit'
-                  className='w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3'
+                  className={`w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={loading}
                 >
-                  Register
+                  {loading ? 'Registering...' : 'Register'}
                 </button>
               </div>
 

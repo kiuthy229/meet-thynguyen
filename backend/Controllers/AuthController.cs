@@ -34,7 +34,7 @@ namespace MeetThyNguyen.Controllers
             }
 
             var token = GenerateJwtToken(user);
-            return Ok(new { message = "Login successful.", token });
+            return Ok(new { message = "Login successful.", token, userId = user.Id });
         }
 
         [HttpPost("register")]

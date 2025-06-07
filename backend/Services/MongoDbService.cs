@@ -71,9 +71,15 @@ public class MongoDbService
     {
         try
         {
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                _logger.LogWarning("Invalid ID format: {Id}", id);
+                return default;
+            }
+
             var collection = GetCollection<T>(collectionKey);
             _logger.LogInformation("Fetching document with ID: {Id} from collection: {CollectionKey}", id, collectionKey);
-            return await collection.Find(Builders<T>.Filter.Eq("_id", id)).FirstOrDefaultAsync();
+            return await collection.Find(Builders<T>.Filter.Eq("_id", objectId)).FirstOrDefaultAsync();
         }
         catch (Exception ex)
         {

@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson;
+using MeetThyNguyen.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+app.UseMiddleware<AuthMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers(); // Ensure controllers are mapped

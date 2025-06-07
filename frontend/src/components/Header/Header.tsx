@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from '../../assets/images/logo.png';
 import userImg from '../../assets/images/avatar-icon.png';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BiMenu } from 'react-icons/bi';
 
 const navLinks = [
@@ -12,8 +12,16 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const userId = localStorage.getItem('userId') || '';
   const headerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleStickyHeader = () => {
     window.addEventListener('scroll', () => {
@@ -42,6 +50,13 @@ const Header = () => {
     if (menuRef.current) {
       menuRef.current.classList.toggle('show__menu'); // Toggle visibility
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId'); // Clear userId
+    setIsLoggedIn(false);
+    navigate('/login');
   };
 
   return (
@@ -75,23 +90,34 @@ const Header = () => {
 
           {/* ====================nav right================= */}
           <div className='nav-right flex items-center gap-4'>
-            <div className='hidden'>
-              <Link to='/'>
-                <figure className='w-[35px] h-[35px] rounded-full cursor-pointer'>
-                  <img src={userImg} className='w-full rounded-full' alt='' />
-                </figure>
-              </Link>
-            </div>
-            <Link to='/login'>
-              <button className='bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]'>
-                Login
-              </button>
-            </Link>
-            <Link to='/register'>
-              <button className='bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]'>
-                Register
-              </button>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link to={`/profile/${userId}`}>
+                  <figure className='w-[35px] h-[35px] rounded-full cursor-pointer'>
+                    <img src={userImg} className='w-full rounded-full' alt='' />
+                  </figure>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className='bg-none py-2 px-6 text-black font-[600] h-[44px] flex items-center justify-center rounded-[50px]'
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to='/login'>
+                  <button className='bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]'>
+                    Login
+                  </button>
+                </Link>
+                <Link to='/register'>
+                  <button className='bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]'>
+                    Register
+                  </button>
+                </Link>
+              </>
+            )}
 
             <span className='md:hidden' onClick={toggleMenu}>
               <BiMenu className='w-6 h-6 cursor-pointer'></BiMenu>

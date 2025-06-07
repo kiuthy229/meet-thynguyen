@@ -1,23 +1,46 @@
 import React from 'react';
 import { AiFillStar } from 'react-icons/ai';
+import { BASE_URL } from '../../config.js';
+import { toast } from 'react-toastify';
 
 const FeedbackForm = () => {
   const [rating, setRating] = React.useState(0);
   const [comment, setComment] = React.useState('');
   const [hover, setHover] = React.useState(0);
+  const [loading, setLoading] = React.useState(false); // Added loading state
 
-  const handleSubmit = async (e: React.FormEvent) => {  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Rating:', rating);
-    console.log('Comment:', comment);
-    // Reset form fields
-    setRating(0);
-    setComment('');
-  }
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${BASE_URL}/Feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rating, comment }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to submit feedback');
+      }
+
+      const { message } = await res.json();
+      toast.success(message);
+      setLoading(false);
+
+      // Reset form fields
+      setRating(0);
+      setComment('');
+    } catch (error: any) {
+      toast.error(error?.message || 'Failed to submit feedback');
+      setLoading(false);
+    }
+  };
 
   return (
-    <form action=''>
+    <form onSubmit={handleSubmit}>
       <div>
         <h3 className='text-headingColor text-[16px] leading-6 font-semibold mb-4 mt-0'>
           How would you rate your experience with this member?
@@ -69,8 +92,12 @@ const FeedbackForm = () => {
         ></textarea>
       </div>
 
-      <button type='submit' className='btn' onClick={handleSubmit}>
-        Submit Feedback
+      <button
+        type='submit'
+        className={`btn ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+        disabled={loading} // Disable button when loading
+      >
+        {loading ? 'Submitting...' : 'Submit Feedback'}
       </button>
     </form>
   );
