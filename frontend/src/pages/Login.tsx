@@ -32,10 +32,11 @@ const Login = () => {
         throw new Error('Login failed');
       }
 
-      const { message, token, userId } = await res.json(); // Include userId in response
+      const { message, token, userId, userRole } = await res.json(); // Include userId in response
       toast.success(message);
       localStorage.setItem('token', token); // Save token
       localStorage.setItem('userId', userId); // Save userId
+      localStorage.setItem('userRole', userRole); 
       setLoading(false);
 
       navigate('/');

@@ -15,8 +15,25 @@ namespace MeetThyNguyen.Models
         public string Name { get; set; }
         public string? Phone { get; set; }
         public string? Photo { get; set; }
-        public string Role { get; set; } 
-        public string Gender { get; set; } 
-        public List<string>? Appointments { get; set; } // Change type to List<string> for ObjectId compatibility
+        public string Role { get; set; }
+        public string Gender { get; set; }
+        public MemberDetails? MemberDetails { get; set; }
+        public ClientDetails? ClientDetails { get; set; }
+    }
+
+    public class MemberDetails
+    {
+        public string Bio { get; set; }
+        public List<string> TimeSlots { get; set; }
+        public List<string> Reviews { get; set; }
+        public double AverageRating { get; set; }
+        public List<string> Experience { get; set; }
+        public decimal Price { get; set; }
+    }
+
+    public class ClientDetails
+    {
+        public List<string>? Appointments { get; set; }
     }
 }
+

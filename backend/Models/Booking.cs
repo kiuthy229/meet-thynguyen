@@ -17,6 +17,7 @@ namespace MeetThyNguyen.Models
         public DateTime AppointmentDate { get; set; }
         public string? Status { get; set; } // "pending", "approved", or "cancelled"
         public bool IsPaid { get; set; }
+        public string? Message { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

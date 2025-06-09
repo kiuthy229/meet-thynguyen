@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { members } from '../../assets/data/members';
 import starIcon from '../../assets/images/star.png';
 import MemberAbout from './MemberAbout';
 import MemberFeedback from './MemberFeedback';
 import SidePanel from './SidePanel';
+import { BASE_URL } from '../../config.js';
 
 const MemberDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const member = members.find((member) => member.id === id);
+  const [member, setMember] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'about' | 'feedback'>('about');
 
+  useEffect(() => {
+    const fetchMember = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/User/${id}`); // Replace with your API endpoint
+        if (response.ok) {
+          const data = await response.json();
+          if (data.role === 'member') {
+            setMember(data);
+          } else {
+            console.error('User is not a member');
+          }
+        } else {
+          console.error('Failed to fetch member details');
+        }
+      } catch (error) {
+        console.error('Error fetching member details:', error);
+      }
+    };
+
+    fetchMember();
+  }, [id]);
+
   if (!member) {
-    return <div>Member not found</div>;
+    return <div>Loading member details...</div>;
   }
 
   return (
@@ -42,8 +64,7 @@ const MemberDetails = () => {
                 </div>
 
                 <p className='text__para text-[14px] leading-5 md:text-[15px] lg:max-w-[390px]'>
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Culpa eveniet quasi optio modi sequi, voluptates eos facere,
+                  {member.bio}
                 </p>
               </div>
             </div>
@@ -69,7 +90,7 @@ const MemberDetails = () => {
                 Feedback
               </button>
             </div>
-            
+
             <div className='mt-[50px]'>
               {activeTab === 'about' && <MemberAbout member={member} />}
               {activeTab === 'feedback' && <MemberFeedback member={member} />}

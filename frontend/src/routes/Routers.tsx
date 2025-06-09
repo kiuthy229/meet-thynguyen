@@ -10,6 +10,7 @@ import Members from '../pages/Members/Members';
 import MemberDetails from '../pages/Members/MemberDetails';
 import RequestMeeting from '../pages/RequestMeeting';
 import PersonalInfo from '../pages/Profile/PersonalInfo';
+import YourMeetings from '../pages/YourMeetings/YourMeetings';
 
 const Routers = () => {
   return (
@@ -23,6 +24,7 @@ const Routers = () => {
       <Route path='/members/:id' element={<MemberDetails />} />
       <Route path='/request' element={<RequestMeeting />} />
       <Route path='/profile/:id' element={<PersonalInfo />} />
+      <Route path='/your-meetings' element={<YourMeetings />} />
       <Route path='*' element={<NotFound />} />
     </Routes>
   );

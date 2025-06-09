@@ -8,18 +8,20 @@ const navLinks = [
   { path: '/', display: 'Home' },
   { path: '/members', display: 'Members' },
   { path: '/request', display: 'Request' },
-  { path: '/contact', display: 'Contact Me' },
+  { path: '/contact', display: 'Contact Us' },
+  { path: '/your-meetings', display: 'Your Meetings' },
 ];
 
 const Header = () => {
+  const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId') || '';
+  const userRole = localStorage.getItem('userRole') || ''; // Retrieve user role
   const headerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, []);
 
@@ -71,20 +73,29 @@ const Header = () => {
           {/* ====================menu================= */}
           <div className='navigation' ref={menuRef} onClick={toggleMenu}>
             <ul className='menu flex items-center gap-[2.7rem]'>
-              {navLinks.map((link, index) => (
-                <li key={index}>
-                  <NavLink
-                    to={link.path}
-                    className={({ isActive }) =>
-                      isActive
-                        ? 'text-primaryColor text-[16px] leading-7 font-[500]'
-                        : ''
-                    }
-                  >
-                    {link.display}
-                  </NavLink>
-                </li>
-              ))}
+              {navLinks
+                .filter((link) => {
+                  if (userRole === 'client') {
+                    return link.path === '/' || link.path === '/request' || link.path === '/contact';
+                  } else if (userRole === 'member') {
+                    return link.path === '/' || link.path === '/your-meetings';
+                  }
+                  return link.path === '/';
+                })
+                .map((link, index) => (
+                  <li key={index}>
+                    <NavLink
+                      to={link.path}
+                      className={({ isActive }) =>
+                        isActive
+                          ? 'text-primaryColor text-[16px] leading-7 font-[500]'
+                          : ''
+                      }
+                    >
+                      {link.display}
+                    </NavLink>
+                  </li>
+                ))}
             </ul>
           </div>
 

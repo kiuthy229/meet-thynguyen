@@ -38,7 +38,6 @@ public class MongoDbService
                 "bookings" => _settings.BookingsCollectionName,
                 "users" => _settings.UsersCollectionName,
                 "reviews" => _settings.ReviewsCollectionName,
-                "members" => _settings.MembersCollectionName,
                 _ => throw new ArgumentException($"Invalid collection key: {collectionKey}")
             };
 
